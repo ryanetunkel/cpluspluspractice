@@ -3,7 +3,6 @@
 using namespace std;
 
 class Ship {
-public:
     int length;
     int **coords;
     int set_length(int length_input);
@@ -37,9 +36,35 @@ int **Ship::get_coords() {
     return coords;
 }
 
-Ship createShip(**coords_input) {
-    Ship new_ship
+class Fleet {
+    public:
+        Ship ship_array[6];
+        add_ship();
+};
+// Ships
+// 1 4
+// 2 3s
+// 3 2s
+
+class Player {
+    bool player;
+    Fleet fleet;
+    Ship create_ship(int** coords_input);
+};
+// ******replace all _ with camelCase
+
+Ship create_ship(int** coords_input) {
+    Ship new_ship;
+    fleet.add_ship
+    new_ship.set_coords(coords_input);
+    return new_ship;
 }
+
+int place_ship(Ship ship, bool player) {
+    
+}
+
+int 
 
 int main() {
     // Switch 1s to 2s if hit
