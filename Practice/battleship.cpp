@@ -2,69 +2,87 @@
 #include <cmath>
 using namespace std;
 
-class Ship {
-    int length;
-    int **coords;
-    int set_length(int length_input);
-    int get_length();
-    int set_coords(int **coords_input);
-    int **get_coords();
+class Ship: public Fleet {
+    public:
+        int setLength(int lengthInput) {
+            return length = lengthInput;
+        }
+        int getLength();
+        int setCoords(int** coordsInput);
+        int** getCoords();
+    
+    protected:
+        int length;
+        int** coords;
 };
 
-int Ship::set_length(int length_input) {
-    return length = length_input;
-}
 
-int Ship::get_length() {
+
+int Ship::getLength() {
     return length;
 }
 
-int Ship::set_coords(int **coords_input)
+int Ship::setCoords(int** coordsInput)
 {
-    bool coords_set = 0;
-    for (int y_coord_index = 0; y_coord_index < sizeof(coords_input) / sizeof(int); y_coord_index++) {
-        for (int x_coord_index = 0; x_coord_index < sizeof(coords_input[y_coord_index]) / sizeof(int); x_coord_index++) {
-            coords_input[y_coord_index][x_coord_index] = coords[y_coord_index][x_coord_index];
+    bool coordsSet = 0;
+    for (int yCoordIndex = 0; yCoordIndex < sizeof(coordsInput) / sizeof(int); yCoordIndex++) {
+        for (int xCoordIndex = 0; xCoordIndex < sizeof(coordsInput[yCoordIndex]) / sizeof(int); xCoordIndex++) {
+            coordsInput[yCoordIndex][xCoordIndex] = coords[yCoordIndex][xCoordIndex];
         }
     }
-    set_length(sizeof(coords) / sizeof(int));
-    coords = coords_input;
-    return coords_set;
+    setLength(sizeof(coords) / sizeof(int));
+    coords = coordsInput;
+    return coordsSet;
 }
 
-int **Ship::get_coords() {
+int** Ship::getCoords() {
     return coords;
 }
 
-class Fleet {
+class Fleet: public Player {
     public:
-        Ship ship_array[6];
-        add_ship();
+        Ship shipArray[6];
+        Ship createShip(int** coordsInput);
+        int addShip(Ship *addedShip);
 };
 // Ships
 // 1 4
 // 2 3s
 // 3 2s
 
+int Fleet::addShip(Ship* addedShip): {
+    shipArray.append(addedShip);
+    return shipArray.contains(addedShip);
+}
+
+Ship Fleet::createShip(int** coordsInput) {
+    Ship* newShip;
+    fleet.addShip(newShip);
+    newShip.setCoords(coordsInput);
+    return newShip;
+}
+
 class Player {
-    bool player;
+    bool playerNum;
+    int** coordsInput;
     Fleet fleet;
-    Ship create_ship(int** coords_input);
+    int** setCoordsInput(int** coordsInput);
+    int placeShip(Ship ship);
 };
-// ******replace all _ with camelCase
 
-Ship create_ship(int** coords_input) {
-    Ship new_ship;
-    fleet.add_ship
-    new_ship.set_coords(coords_input);
-    return new_ship;
+int Player::placeShip(Ship ship) {
+    return 0;
 }
 
-int place_ship(Ship ship, bool player) {
-    
-}
+class Game {
+    Player players[2];
+    bool playerTurn;
+    int takeTurn();
+};
 
-int 
+int Game::takeTurn() {
+    return 0;
+}
 
 int main() {
     // Switch 1s to 2s if hit
@@ -90,9 +108,12 @@ int main() {
         {0, 1, 1, 0, 0, 0, 1, 1, 0, 0},
         {0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
         {0, 0, 0, 0, 0, 0, 0, 0, 0, 0}};
-    bool player_turn = rand() % 2;
-    cout << "Player " + ((int)player_turn + 1);
-    for ()
-        if (num_ships)
-            cout << " place your ships. Input coordinates of ship length" cout << (player_turn) ? "Player 2, " : "Player 1, ";
+    bool playerTurn = rand() % 2;
+    cout << "Player " + ((int)playerTurn + 1);
+    for () {
+        if (numShips <= player.fleet.size()) {
+            cout << " place your ships. Input coordinates of ship length "; 
+            cout << (playerTurn) ? "Player 2, " : "Player 1, ";
+        }
+    }
 }
