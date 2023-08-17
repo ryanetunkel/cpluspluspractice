@@ -77,6 +77,9 @@ class Player {
         bool getPlayerNum() {
             return playerNum;
         }
+        Fleet getPlayerFleet() {
+            return fleet;
+        }
         int** getPlayerGrid() {
             int** tempGrid = 0;
             tempGrid = new int*[GRIDWIDTH];
@@ -134,36 +137,37 @@ class Game {
         Player getActivePlayer() {
             return activePlayer;
         }
-        int setActivePlayer(Player* activePlayerInput) {
-            Player tempActivePlayer;
-            Player* tempActivePlayerPtr = &tempActivePlayer;
-            return activePlayer = &tempActivePlayerPtr;
+        int setActivePlayer(Player activePlayerInput) {
+            activePlayer = activePlayerInput;
+            return 0;
         }
         bool getActivePlayerIndex() {
-            return players[1].playerNum == activePlayer.playerNum
+            return players[1].getPlayerNum() == activePlayer.getPlayerNum();
         }
         int startGame() {
+            Player tempActivePlayer;
+            tempActivePlayer = players[rand() % 2];
             displayPlayerGrid(players[0]);
             displayPlayerGrid(players[1]);
-            return setActivePlayer(players[rand() % 2]);
+            return setActivePlayer(tempActivePlayer);
         }
         int takeTurn() {
             displayGrids(getActivePlayer());
             return setActivePlayer(players[!getActivePlayerIndex()]);
         }
         int displayPlayerGrid(Player playerInput) {
-            for (auto &yCoord : playerInput.getPlayerGrid()) {
-                for (auto &xCoord : yCoord) {
-                    cout << xCoord << " ";
+            for (int yCoordIndex = 0; yCoordIndex < GRIDHEIGHT; yCoordIndex++) {
+                for (int xCoordIndex = 0; xCoordIndex < GRIDWIDTH; xCoordIndex++ ) {
+                    cout << playerInput.getPlayerGrid()[yCoordIndex][xCoordIndex] << " ";
                 }
                 cout << endl;
             }
             return 0;
         }
         int displayOpponentGrid(Player playerInput) {
-            for (auto &yCoord : playerInput.getOpponentGrid()) {
-                for (auto &xCoord : yCoord) {
-                    cout << xCoord << " ";
+            for (int yCoordIndex = 0; yCoordIndex < GRIDHEIGHT; yCoordIndex++) {
+                for (int xCoordIndex = 0; xCoordIndex < GRIDWIDTH; xCoordIndex++ ) {
+                    cout << playerInput.getOpponentGrid()[yCoordIndex][xCoordIndex] << " ";
                 }
                 cout << endl;
             }
@@ -184,14 +188,27 @@ class Game {
             }
             return 0;
         }
-        bool shoot() {
-            int coord = players[!getActivePlayerIndex()].getPlayerGrid[getShotCoords()[0]][getShotCoords()[1]];
-            if (coord == 0) {
-                cout << "Miss." << endl;
-            }
-            else if (coord == 1) {
-                cout << "HIT!" << endl;
-                shotMade = 1;
+        bool shoot() { // 0 means no ship and no shots, 1 means ship and no shots, 2 means no ship and a shot, 3 means a ship and a shot.
+            int coord = players[!getActivePlayerIndex()].getPlayerGrid()[getShotCoords()[0]][getShotCoords()[1]];
+            if (coord == 0 || coord == 1) {
+                Fleet tempfleet = players[!getActivePlayerIndex()].getPlayerFleet();
+                Ship tempShip;
+                int tempCoords[2];
+                for (int fleetIndex = 0; fleetIndex < FLEETSIZE; fleetIndex++) {
+                    tempShip = tempfleet.getShipArray()[fleetIndex];
+                    for (int shipLengthIndex = 0; shipLengthIndex < tempShip.getLength(); shipLengthIndex++) {
+                        tempCoords[0] = tempShip.getCoords()[shipLengthIndex][0];
+                        tempCoords[1] = tempShip.getCoords()[shipLengthIndex][1];
+                        if (tempCoords[0] == getShotCoords()[0] && tempCoords[1] == getShotCoords()[1]) {
+                            players[!getActivePlayerIndex()].getPlayerGrid()[getShotCoords()[0]][getShotCoords()[1]] += 2;
+                            if (coord == 0) {
+                                cout << "Miss." << endl;
+                            } else {
+                                cout << "HIT!" << endl;
+                            }
+                        }
+                    }
+                }
             } 
             else if (coord == 2 || coord == 3) {
                 cout << "Already shot there, shoot elsewhere." << endl;
@@ -203,10 +220,10 @@ class Game {
             int tempShotCoords[2];
             while (!shoot()) {
                 displayGrids(playerInput);
-                cout << "Player " + (getActivePlayerIndex() + 1) + endl;
-                cout << "The top grid displays your opponent\'s fleet, the bottom grid displays yours." << endl:
+                cout << "Player " + (getActivePlayerIndex() + 1) << endl;
+                cout << "The top grid displays your opponent\'s fleet, the bottom grid displays yours." << endl;
                 cout << "Xs are hits, Os are misses." << endl;
-                cout << "Take your shot."
+                cout << "Take your shot." << endl;
                 cout << "Input the y coordinate of your shot, a value between 1 and 10:" << endl;
                 cin >> yCoord;
                 cout << "Input the x coordinate of your shot, a value between 1 and 10:" << endl;
@@ -216,11 +233,15 @@ class Game {
                 setShotCoords(tempShotCoords);
                 shoot();  
             }
-            return setActivePlayer(!getActivePlayer());
+            return setActivePlayer(players[!getActivePlayerIndex()]);
+        }
+        int checkSpaceTaken() {
+
         }
         int takeSetupTurn(Player playerInput) {
             int yStartCoord, xStartCoord,
                 yEndCoord, xEndCoord;
+            int startCoords[2], endCoords[2];
             for (int shipIndex = 0; shipIndex < FLEETSIZE; shipIndex++) {
                 cout << "Player " + (getActivePlayerIndex() + 1);
                 cout << ", place your ship of length ";
@@ -233,9 +254,13 @@ class Game {
                     cout << "2. " << endl;
                 }
                 cout << "Input your starting y coordinate, a value between 1 and 10:" << endl;
-                cin >> yCoord;
+                cin >> startCoords[0];
+                startCoords[0] -= 1;
                 cout << "Input your starting x coordinate, a value between 1 and 10:" << endl;
-                cin >> xCoord;
+                cin >> startCoords[1];
+                startCoords[1] -= 1;
+                if (yStartCoord >= 0 && yStartCoord <= GRIDHEIGHT - 1
+                    && )
                 cout >> "";
                 tempString.clear();
             }
