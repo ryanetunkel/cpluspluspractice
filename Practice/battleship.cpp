@@ -40,15 +40,15 @@ class Fleet {
         Ship* getShipArray() {
             return shipArray;
         }
-        int addShip(Ship* addedShip) {
+        int addShip(Ship addedShip) {
             bool shipAdded = 0;
             Ship* shipArray = getShipArray();
-            if (!shipAdded) {
-                for (int shipIndex = 0; shipIndex < sizeof(shipArray) / sizeof(Ship); shipIndex++) {
-                    if (shipArray[shipIndex].getLength() != NULL) {
-                        shipArray[shipIndex] = &addedShip;
-                        shipAdded = 1;
-                    }
+            for (int shipIndex = 0; !shipAdded && shipIndex < sizeof(shipArray) / sizeof(Ship); shipIndex++) {
+                if (shipArray[shipIndex].getLength() == NULL) {
+                    shipArray[shipIndex] = addedShip;
+                    shipArray[shipIndex].setLength(addedShip.getLength());
+                    shipArray[shipIndex].setCoords(addedShip.getCoords());
+                    shipAdded = 1;
                 }
             }
             return 0;
@@ -56,8 +56,8 @@ class Fleet {
         Ship* createShip(int** coordsInput) {
             Ship newShip;
             Ship* newShipPtr = &newShip;
-            addShip(newShipPtr);
             newShip.setCoords(coordsInput);
+            addShip(newShip);
             return newShipPtr;
         }
     protected:
@@ -74,21 +74,47 @@ class Player {
             fleet.createShip(coordsInput);
             return 0;
         }
-        int** getGrid() {
+        bool getPlayerNum() {
+            return playerNum;
+        }
+        int** getPlayerGrid() {
             int** tempGrid = 0;
             tempGrid = new int*[GRIDWIDTH];
             for (int yCoordIndex = 0; yCoordIndex < GRIDHEIGHT; yCoordIndex++ ) {
                 tempGrid[yCoordIndex] = new int[GRIDWIDTH];
                 for (int xCoordIndex = 0; xCoordIndex < GRIDWIDTH; xCoordIndex++) {
-                    tempGrid[yCoordIndex][xCoordIndex] = grid[yCoordIndex][xCoordIndex];
+                    tempGrid[yCoordIndex][xCoordIndex] = playerGrid[yCoordIndex][xCoordIndex];
+                }
+            }
+            return tempGrid;
+        }
+        int** getOpponentGrid() {
+            int** tempGrid = 0;
+            tempGrid = new int*[GRIDWIDTH];
+            for (int yCoordIndex = 0; yCoordIndex < GRIDHEIGHT; yCoordIndex++ ) {
+                tempGrid[yCoordIndex] = new int[GRIDWIDTH];
+                for (int xCoordIndex = 0; xCoordIndex < GRIDWIDTH; xCoordIndex++) {
+                    tempGrid[yCoordIndex][xCoordIndex] = opponentGrid[yCoordIndex][xCoordIndex];
                 }
             }
             return tempGrid;
         }
     protected:
-        bool playerNum;
+        int playerNum;
         Fleet fleet;
-        int grid[GRIDHEIGHT][GRIDWIDTH] = {
+        int playerGrid[GRIDHEIGHT][GRIDWIDTH] = {
+            {0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+            {0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+            {0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+            {0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+            {0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+            {0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+            {0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+            {0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+            {0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+            {0, 0, 0, 0, 0, 0, 0, 0, 0, 0}
+        };
+        int opponentGrid[GRIDHEIGHT][GRIDWIDTH] = {
             {0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
             {0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
             {0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
@@ -112,19 +138,48 @@ class Game {
             return playerTurn = playerTurnInput;
         }
         int startGame() {
+            displayGrids(players[0]);
+            displayGrids(players[1]);
             return setPlayerTurn(rand() % 2);
         }
-        int displayPlayerGrid() {
-            cout << players[playerTurn].getGrid();
+        int displayPlayerGrid(Player playerInput) {
+            for (auto &yCoord : playerInput.getPlayerGrid()) {
+                for (auto &xCoord : yCoord) {
+                    cout << xCoord << " ";
+                }
+                cout << endl;
+            }
             return 0;
         }
-        int takeTurn() {
-            bool tempPlayerTurn = getPlayerTurn();
-            displayPlayerGrid();
-            return setPlayerTurn(!tempPlayerTurn);
+        int displayOpponentGrid(Player playerInput) {
+            cout << playerInput.getOpponentGrid(); // Unsure if will print as wanted
+            return 0;
+        }
+        int displayGrids(Player playerInput) {
+            displayPlayerGrid(playerInput);
+            displayOpponentGrid(playerInput);
+            return 0;
+        }
+        int* getShotCoords() {
+            return shotCoords;
+        }
+        int setShotCoords(int* coordsInput) {
+            for (int coordIndex = 0; coordIndex < 2; coordIndex++) {
+                getShotCoords()[coordIndex] = coordsInput[coordIndex];
+            }
+            return 0;
+        }
+        int shoot() {
+            
+        }
+        int takeTurn(Player playerInput) {
+            displayGrids(playerInput);
+            shoot()
+            return setPlayerTurn(!getPlayerTurn());
         }
     protected:
         bool playerTurn;
+        int* shotCoords;
 };
 
 int main() {
@@ -132,7 +187,7 @@ int main() {
     bool gameActive = 1;
     Game* game = 0;
     game = new Game;
-    game.startGame();
+    game.startGame(); // Find out way to call methods on Game Object not Game pointer 
     while (gameActive) {
         Player* currentPlayer = game.players[game.getPlayerTurn()];
         for (int shipIndex = 0; shipIndex < FLEETSIZE; shipIndex++) {
