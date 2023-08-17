@@ -88,11 +88,11 @@ class Player {
             }
             return tempGrid;
         }
-        int** getOpponentGrid() {
-            int** tempGrid = 0;
-            tempGrid = new int*[GRIDWIDTH];
-            for (int yCoordIndex = 0; yCoordIndex < GRIDHEIGHT; yCoordIndex++ ) {
-                tempGrid[yCoordIndex] = new int[GRIDWIDTH];
+        char** getOpponentGrid() {
+            char** tempGrid = 0;
+            tempGrid = new char*[GRIDWIDTH];
+            for (int yCoordIndex = 0; yCoordIndex < GRIDHEIGHT; yCoordIndex++) {
+                tempGrid[yCoordIndex] = new char[GRIDWIDTH];
                 for (int xCoordIndex = 0; xCoordIndex < GRIDWIDTH; xCoordIndex++) {
                     tempGrid[yCoordIndex][xCoordIndex] = opponentGrid[yCoordIndex][xCoordIndex];
                 }
@@ -114,7 +114,7 @@ class Player {
             {0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
             {0, 0, 0, 0, 0, 0, 0, 0, 0, 0}
         };
-        int opponentGrid[GRIDHEIGHT][GRIDWIDTH] = {
+        char opponentGrid[GRIDHEIGHT][GRIDWIDTH] = {
             {0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
             {0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
             {0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
@@ -131,16 +131,25 @@ class Player {
 class Game {
     public:
         Player players[2];
-        bool getPlayerTurn() {
-            return playerTurn;
+        Player getActivePlayer() {
+            return activePlayer;
         }
-        int setPlayerTurn(bool playerTurnInput) {
-            return playerTurn = playerTurnInput;
+        int setActivePlayer(Player* activePlayerInput) {
+            Player tempActivePlayer;
+            Player* tempActivePlayerPtr = &tempActivePlayer;
+            return activePlayer = &tempActivePlayerPtr;
+        }
+        bool getActivePlayerIndex() {
+            return players[1].playerNum == activePlayer.playerNum
         }
         int startGame() {
-            displayGrids(players[0]);
-            displayGrids(players[1]);
-            return setPlayerTurn(rand() % 2);
+            displayPlayerGrid(players[0]);
+            displayPlayerGrid(players[1]);
+            return setActivePlayer(players[rand() % 2]);
+        }
+        int takeTurn() {
+            displayGrids(getActivePlayer());
+            return setActivePlayer(players[!getActivePlayerIndex()]);
         }
         int displayPlayerGrid(Player playerInput) {
             for (auto &yCoord : playerInput.getPlayerGrid()) {
@@ -152,11 +161,17 @@ class Game {
             return 0;
         }
         int displayOpponentGrid(Player playerInput) {
-            cout << playerInput.getOpponentGrid(); // Unsure if will print as wanted
+            for (auto &yCoord : playerInput.getOpponentGrid()) {
+                for (auto &xCoord : yCoord) {
+                    cout << xCoord << " ";
+                }
+                cout << endl;
+            }
             return 0;
         }
         int displayGrids(Player playerInput) {
             displayPlayerGrid(playerInput);
+            cout << endl;
             displayOpponentGrid(playerInput);
             return 0;
         }
@@ -169,16 +184,64 @@ class Game {
             }
             return 0;
         }
-        int shoot() {
-            
+        bool shoot() {
+            int coord = players[!getActivePlayerIndex()].getPlayerGrid[getShotCoords()[0]][getShotCoords()[1]];
+            if (coord == 0) {
+                cout << "Miss." << endl;
+            }
+            else if (coord == 1) {
+                cout << "HIT!" << endl;
+                shotMade = 1;
+            } 
+            else if (coord == 2 || coord == 3) {
+                cout << "Already shot there, shoot elsewhere." << endl;
+            } 
+            return coord == 0 || coord == 1;
         }
         int takeTurn(Player playerInput) {
-            displayGrids(playerInput);
-            shoot()
-            return setPlayerTurn(!getPlayerTurn());
+            int yCoord, xCoord;
+            int tempShotCoords[2];
+            while (!shoot()) {
+                displayGrids(playerInput);
+                cout << "Player " + (getActivePlayerIndex() + 1) + endl;
+                cout << "The top grid displays your opponent\'s fleet, the bottom grid displays yours." << endl:
+                cout << "Xs are hits, Os are misses." << endl;
+                cout << "Take your shot."
+                cout << "Input the y coordinate of your shot, a value between 1 and 10:" << endl;
+                cin >> yCoord;
+                cout << "Input the x coordinate of your shot, a value between 1 and 10:" << endl;
+                cin >> xCoord;
+                tempShotCoords[0] = yCoord;
+                tempShotCoords[1] = xCoord;
+                setShotCoords(tempShotCoords);
+                shoot();  
+            }
+            return setActivePlayer(!getActivePlayer());
+        }
+        int takeSetupTurn(Player playerInput) {
+            int yStartCoord, xStartCoord,
+                yEndCoord, xEndCoord;
+            for (int shipIndex = 0; shipIndex < FLEETSIZE; shipIndex++) {
+                cout << "Player " + (getActivePlayerIndex() + 1);
+                cout << ", place your ship of length ";
+                if (shipIndex == 0) {
+                    cout << "4. " << endl;
+                }
+                else if (shipIndex > 0 && shipIndex < 3) {
+                    cout << "3. " << endl;
+                } else {
+                    cout << "2. " << endl;
+                }
+                cout << "Input your starting y coordinate, a value between 1 and 10:" << endl;
+                cin >> yCoord;
+                cout << "Input your starting x coordinate, a value between 1 and 10:" << endl;
+                cin >> xCoord;
+                cout >> "";
+                tempString.clear();
+            }
         }
     protected:
-        bool playerTurn;
+        Player activePlayer;
         int* shotCoords;
 };
 
