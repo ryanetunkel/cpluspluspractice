@@ -191,11 +191,11 @@ class Game {
         bool shoot() { // 0 means no ship and no shots, 1 means ship and no shots, 2 means no ship and a shot, 3 means a ship and a shot.
             int coord = players[!getActivePlayerIndex()].getPlayerGrid()[getShotCoords()[0]][getShotCoords()[1]];
             if (coord == 0 || coord == 1) {
-                Fleet tempfleet = players[!getActivePlayerIndex()].getPlayerFleet();
+                Fleet tempFleet = players[!getActivePlayerIndex()].getPlayerFleet();
                 Ship tempShip;
                 int tempCoords[2];
                 for (int fleetIndex = 0; fleetIndex < FLEETSIZE; fleetIndex++) {
-                    tempShip = tempfleet.getShipArray()[fleetIndex];
+                    tempShip = tempFleet.getShipArray()[fleetIndex];
                     for (int shipLengthIndex = 0; shipLengthIndex < tempShip.getLength(); shipLengthIndex++) {
                         tempCoords[0] = tempShip.getCoords()[shipLengthIndex][0];
                         tempCoords[1] = tempShip.getCoords()[shipLengthIndex][1];
@@ -220,7 +220,7 @@ class Game {
             int tempShotCoords[2];
             while (!shoot()) {
                 displayGrids(playerInput);
-                cout << "Player " + (getActivePlayerIndex() + 1) << endl;
+                cout << "Player " << (getActivePlayerIndex() + 1) << endl;
                 cout << "The top grid displays your opponent\'s fleet, the bottom grid displays yours." << endl;
                 cout << "Xs are hits, Os are misses." << endl;
                 cout << "Take your shot." << endl;
@@ -239,30 +239,109 @@ class Game {
 
         }
         int takeSetupTurn(Player playerInput) {
+            Fleet tempFleet = players[!getActivePlayerIndex()].getPlayerFleet();
+            int shipLength;
             int yStartCoord, xStartCoord,
                 yEndCoord, xEndCoord;
             int startCoords[2], endCoords[2];
+            bool validYStartCoord = 0, validXStartCoord = 0,
+                validStartCoords = 0, validEndCoords = 0;
+            bool north, east, south, west;
+            bool shipInWay = 0;
+            int validEndCoordsArray[4][2];
+            int chosenCoordsOption;
+            int numOptions;
             for (int shipIndex = 0; shipIndex < FLEETSIZE; shipIndex++) {
-                cout << "Player " + (getActivePlayerIndex() + 1);
+                cout << "Player " << (getActivePlayerIndex() + 1);
                 cout << ", place your ship of length ";
                 if (shipIndex == 0) {
                     cout << "4. " << endl;
+                    shipLength = 4;
                 }
                 else if (shipIndex > 0 && shipIndex < 3) {
                     cout << "3. " << endl;
+                    shipLength = 3;
                 } else {
                     cout << "2. " << endl;
+                    shipLength = 2;
                 }
-                cout << "Input your starting y coordinate, a value between 1 and 10:" << endl;
-                cin >> startCoords[0];
-                startCoords[0] -= 1;
-                cout << "Input your starting x coordinate, a value between 1 and 10:" << endl;
-                cin >> startCoords[1];
-                startCoords[1] -= 1;
-                if (yStartCoord >= 0 && yStartCoord <= GRIDHEIGHT - 1
-                    && )
-                cout >> "";
-                tempString.clear();
+                while (!validStartCoords) {
+                    validStartCoords = 0;
+                    shipInWay = 0;
+                    startCoords[0] = 0;
+                    startCoords[1] = 0;
+                    while (!validXStartCoord) {
+                        cout << "Input your starting X coordinate, a value between 1 and 10 (including 1 and 10):" << endl;
+                        cin >> startCoords[1];
+                        validXStartCoord == 
+                            startCoords[1] >= 0 
+                            && startCoords[1] <= GRIDWIDTH - 1;
+                        if (!validXStartCoord) {
+                            cout << "Invald coordinate: Improper value." << endl;
+                        }
+                    }
+                    startCoords[1] -= 1; // Converts to index number
+
+                    while (!validYStartCoord) {
+                        cout << "Input your starting Y coordinate, a value between 1 and 10 (including 1 and 10):" << endl;
+                        cin >> startCoords[0];
+                        validYStartCoord == 
+                            startCoords[0] >= 0 
+                            && startCoords[0] <= GRIDHEIGHT - 1;
+                        if (!validYStartCoord) {
+                            cout << "Invald coordinate: Improper value." << endl;
+                        }
+                    }
+                    startCoords[0] -= 1; // Converts to index number
+                    
+                    for (int directionIndex = 0; !shipInWay && directionIndex < 4; directionIndex++) { //placeholder
+                        numOptions++; // counts number of options there are, used later
+                        switch (shipLength) {
+                            case 4:
+                                break;
+                            case 3:
+                                break;
+                            case 2:
+                                break;
+                        }
+                        /* && Math to see if there in space in any of the 4 cardinal directions for a ship of this size */;
+                        // If there is a ship in the way, shipInWay = 1;
+                    }
+
+                    if (!shipInWay) {
+                        validStartCoords = 
+                            (tempFleet.getShipArray()[shipIndex].getCoords()[startCoords[0]][startCoords[1]]) != 1;
+                        if (!validStartCoords) {
+                            cout << "Invalid coordinate: Space already occupied." << endl;
+                        }
+                    } else {
+                        cout << "Invalid coordinate: Not enough space for ship." << endl;
+                    }
+
+                    
+                }
+                while (!validEndCoords) {
+                    cout << "The length of the ship you are placing is: " + shipLength;
+                    cout << " and your starting coordinates are X: " << (startCoords[1] + 1);
+                    cout << " , Y: " << (startCoords[0] + 1) << endl;
+                    cout << "Which of these coordinates would you like the back end of the ship to be placed in?." << endl; 
+                    for (int validEndCoordsArrayIndex = 0; validEndCoordsArrayIndex < numOptions; validEndCoordsArrayIndex++) {
+                        cout << "Type \"" << (validEndCoordsArrayIndex + 1) << "\" for: X: " << validEndCoordsArray[validEndCoordsArrayIndex][0];
+                        cout << ", Y: " << validEndCoordsArray[validEndCoordsArrayIndex][1] << "." << endl;
+                    }
+                    cin >> chosenCoordsOption;
+                    if (chosenCoordsOption > 0 && chosenCoordsOption <= numOptions) {
+                        endCoords[0] = validEndCoordsArray[chosenCoordsOption - 1][0];
+                        endCoords[1] = validEndCoordsArray[chosenCoordsOption - 1][1];
+                        endCoords[0] -= 1; // Converts to index number
+                        endCoords[1] -= 1; // Converts to index number
+                        validEndCoords = 1;
+                    } else {
+                        cout << "Invalid Selection: Number not listed." << endl;
+                    }
+                }
+                cout << "";
+                // tempString.clear(); // ??
             }
         }
     protected:

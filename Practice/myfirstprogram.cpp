@@ -242,7 +242,8 @@ int main() {
     // can do more too:
     // string letters[2][2][2];
 
-
+    int i = 1;
+    cout << "Hi Number " << i << ", how are you?";
 
     return 0;
 }
