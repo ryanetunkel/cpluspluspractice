@@ -134,6 +134,9 @@ class Player {
 class Game {
     public:
         Player players[2];
+        int createPlayer() {
+            return 0; // Work on
+        }
         Player getActivePlayer() {
             return activePlayer;
         }
@@ -144,7 +147,7 @@ class Game {
         bool getActivePlayerIndex() {
             return players[1].getPlayerNum() == activePlayer.getPlayerNum();
         }
-        int startGame() {
+        int startGame() { // Work on
             Player tempActivePlayer;
             tempActivePlayer = players[rand() % 2];
             displayPlayerGrid(players[0]);
@@ -352,13 +355,13 @@ class Game {
 int main() {
     // Switch 1s to 2s if hit
     bool gameActive = 1;
-    Game* game = 0;
-    game = new Game;
+    Game game;
+    Game* gameptr = &game;
     game.startGame(); // Find out way to call methods on Game Object not Game pointer 
     while (gameActive) {
-        Player* currentPlayer = game.players[game.getPlayerTurn()];
+        Player currentPlayer = game.getActivePlayer();
         for (int shipIndex = 0; shipIndex < FLEETSIZE; shipIndex++) {
-            cout << "Player " + ((int)(game.getPlayerTurn()) + 1);
+            cout << "Player " + ((game.getActivePlayerIndex()) + 1);
             cout << " place your ships. Input coordinates of ship length ";
         }
     }
