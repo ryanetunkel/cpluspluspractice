@@ -74,11 +74,26 @@ class Player {
             fleet.createShip(coordsInput);
             return 0;
         }
+        int setPlayerNum(bool playerNumInput) {
+            return playerNum = playerNumInput;
+        }
         bool getPlayerNum() {
             return playerNum;
         }
+        int setPlayerFleet(Fleet fleetInput) {
+            fleet = fleetInput;
+            return 0;
+        }
         Fleet getPlayerFleet() {
             return fleet;
+        }
+        int setPlayerGrid(int** playerGridInput) {
+            for (int yCoordIndex = 0; yCoordIndex < GRIDHEIGHT; yCoordIndex++) {
+                for (int xCoordIndex = 0; xCoordIndex < GRIDWIDTH; xCoordIndex++) {
+                    playerGrid[yCoordIndex][xCoordIndex] = playerGridInput[yCoordIndex][xCoordIndex];
+                }   
+            }
+            return 0;
         }
         int** getPlayerGrid() {
             int** tempGrid = 0;
@@ -90,6 +105,14 @@ class Player {
                 }
             }
             return tempGrid;
+        }
+        int setOpponentGrid(char** playerGridInput) {
+            for (int yCoordIndex = 0; yCoordIndex < GRIDHEIGHT; yCoordIndex++) {
+                for (int xCoordIndex = 0; xCoordIndex < GRIDWIDTH; xCoordIndex++) {
+                    playerGrid[yCoordIndex][xCoordIndex] = playerGridInput[yCoordIndex][xCoordIndex];
+                }   
+            }
+            return 0;
         }
         char** getOpponentGrid() {
             char** tempGrid = 0;
@@ -118,16 +141,16 @@ class Player {
             {0, 0, 0, 0, 0, 0, 0, 0, 0, 0}
         };
         char opponentGrid[GRIDHEIGHT][GRIDWIDTH] = {
-            {0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-            {0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-            {0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-            {0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-            {0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-            {0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-            {0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-            {0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-            {0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-            {0, 0, 0, 0, 0, 0, 0, 0, 0, 0}
+            {'~', '~', '~', '~', '~', '~', '~', '~', '~', '~'},
+            {'~', '~', '~', '~', '~', '~', '~', '~', '~', '~'},
+            {'~', '~', '~', '~', '~', '~', '~', '~', '~', '~'},
+            {'~', '~', '~', '~', '~', '~', '~', '~', '~', '~'},
+            {'~', '~', '~', '~', '~', '~', '~', '~', '~', '~'},
+            {'~', '~', '~', '~', '~', '~', '~', '~', '~', '~'},
+            {'~', '~', '~', '~', '~', '~', '~', '~', '~', '~'},
+            {'~', '~', '~', '~', '~', '~', '~', '~', '~', '~'},
+            {'~', '~', '~', '~', '~', '~', '~', '~', '~', '~'},
+            {'~', '~', '~', '~', '~', '~', '~', '~', '~', '~'},
         };
 };
 
@@ -204,6 +227,7 @@ class Game {
                         tempCoords[1] = tempShip.getCoords()[shipLengthIndex][1];
                         if (tempCoords[0] == getShotCoords()[0] && tempCoords[1] == getShotCoords()[1]) {
                             players[!getActivePlayerIndex()].getPlayerGrid()[getShotCoords()[0]][getShotCoords()[1]] += 2;
+                            players[getActivePlayerIndex()].getOpponentGrid()[getShotCoords()[0]][getShotCoords()[1]].set'X';
                             if (coord == 0) {
                                 cout << "Miss." << endl;
                             } else {
@@ -376,8 +400,7 @@ class Game {
                         endCoords[1] -= 1; // Converts to index number
                         validEndCoords = 1;
                         // Math for adding the full coords to the ship
-                        int finalCoords[shipLength][2];
-                        int* finalCoordsPtr = *finalCoords;// working on pointer for VVVV
+                        int* finalCoords[shipLength];
                         finalCoords[0][0] = startCoords[0];
                         finalCoords[0][1] = startCoords[1];
                         for (int finalCoordsIndex = 0; finalCoordsIndex < shipLength - 2; finalCoordsIndex++) {
@@ -389,10 +412,7 @@ class Game {
                         finalCoords[shipLength][0] = endCoords[0];
                         finalCoords[shipLength][1] = endCoords[1];
                         tempFleet.getShipArray()[shipIndex].setCoords(finalCoords);// HERE HERE
-
-                        // Updating the player's fleet
-                        // for each ship in tempFleet, make an identical one in the actual one.
-                        // players[!getActivePlayerIndex()].setPlayerFleet() 
+                        players[getActivePlayerIndex()].setPlayerFleet(tempFleet);
                     } else {
                         cout << "Invalid Selection: Number not listed." << endl;
                     }
