@@ -70,6 +70,12 @@ class Fleet {
 
 class Player {
     public:
+        int setPoints(int pointsInput) {
+            return points = pointsInput;
+        }
+        int getPoints() {
+            return points;
+        }
         int placeShip(int** coordsInput) {
             fleet.createShip(coordsInput);
             return 0;
@@ -106,7 +112,7 @@ class Player {
             }
             return tempGrid;
         }
-        int setOpponentGrid(char** playerGridInput) {
+        int setOpponentGrid(char playerGridInput[][GRIDWIDTH]) {
             for (int yCoordIndex = 0; yCoordIndex < GRIDHEIGHT; yCoordIndex++) {
                 for (int xCoordIndex = 0; xCoordIndex < GRIDWIDTH; xCoordIndex++) {
                     playerGrid[yCoordIndex][xCoordIndex] = playerGridInput[yCoordIndex][xCoordIndex];
@@ -127,6 +133,7 @@ class Player {
         }
     protected:
         int playerNum;
+        int points;
         Fleet fleet;
         int playerGrid[GRIDHEIGHT][GRIDWIDTH] = {
             {0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
@@ -173,9 +180,13 @@ class Game {
         int startGame() { // Work on
             Player tempActivePlayer;
             tempActivePlayer = players[rand() % 2];
-            displayPlayerGrid(players[0]);
-            displayPlayerGrid(players[1]);
-            return setActivePlayer(tempActivePlayer);
+            setActivePlayer(tempActivePlayer);
+            cout << "Player " << tempActivePlayer.getPlayerNum() << ", you go first." << endl;
+            takeSetupTurn(tempActivePlayer);
+            setActivePlayer(players[!getActivePlayerIndex()]);
+            cout << "Player " << tempActivePlayer.getPlayerNum() << ", your turn now." << endl;
+            takeSetupTurn(tempActivePlayer);
+            return 0;
         }
         int takeTurn() {
             displayGrids(getActivePlayer());
@@ -214,16 +225,46 @@ class Game {
             }
             return 0;
         }
+        int checkScore(Player playerInput) {
+            return playerInput.getPoints();
+        }
+        int playerWin() {
+            int player1Score = checkScore(players[0]);
+            int player2Score = checkScore(players[1]);
+            if (player1Score > player2Score && player1Score >= 6) {
+                return 1;
+            } 
+            else if (player2Score > player1Score && player2Score >= 6) {
+                return 2;
+            } else {
+                return 0;
+            }
+        }
+        bool gameEnd() {
+            switch (playerWin()) {
+                case 0: 
+                    return 0;
+                case 1:
+                    cout << "Player 1 Wins!" << endl;
+                    return 1;
+                case 2:
+                    cout << "Player 2 Wins!" << endl;
+                    return 1;
+            }
+        }
         bool shoot() { // 0 means no ship and no shots, 1 means ship and no shots, 2 means no ship and a shot, 3 means a ship and a shot.
             int coord = players[!getActivePlayerIndex()].getPlayerGrid()[getShotCoords()[0]][getShotCoords()[1]];
             if (coord == 0 || coord == 1) {
                 Fleet tempFleet = players[!getActivePlayerIndex()].getPlayerFleet();
                 Ship tempShip;
                 int tempCoords[2];
+                bool shipStanding = 1;
+                int* tempShipVals = 0;
                 char tempGrid[GRIDHEIGHT][GRIDWIDTH];
                 for (int fleetIndex = 0; fleetIndex < FLEETSIZE; fleetIndex++) {
                     tempShip = tempFleet.getShipArray()[fleetIndex];
                     for (int shipLengthIndex = 0; shipLengthIndex < tempShip.getLength(); shipLengthIndex++) {
+                        tempShipVals = new int [tempShip.getLength()];
                         tempCoords[0] = tempShip.getCoords()[shipLengthIndex][0];
                         tempCoords[1] = tempShip.getCoords()[shipLengthIndex][1];
                         if (tempCoords[0] == getShotCoords()[0] && tempCoords[1] == getShotCoords()[1]) {
@@ -235,13 +276,27 @@ class Game {
                                 }
                             }
                             tempGrid[getShotCoords()[0]][getShotCoords()[1]] = 'X';
-                            players[getActivePlayerIndex()].setOpponentGrid(tempGrid);
+                            getActivePlayer().setOpponentGrid(tempGrid);
                             if (coord == 0) {
                                 cout << "Miss." << endl;
                             } else {
                                 cout << "HIT!" << endl;
                             }
                         }
+                        tempShipVals[shipLengthIndex] = 
+                        players[!getActivePlayerIndex()].getPlayerGrid()[getShotCoords()[0]][getShotCoords()[1]];
+                    }
+                    for (int tempShipValsIndex = 0; tempShipValsIndex < tempShip.getLength(); tempShipValsIndex++) {
+                        switch (tempShipVals[tempShipValsIndex]) {
+                            case 1:
+                                shipStanding = 1;
+                                tempShipValsIndex = tempShip.getLength();
+                            case 3:
+                                shipStanding = 0;
+                        }
+                    }
+                    if (!shipStanding) {
+                        getActivePlayer().setPoints(getActivePlayer().getPoints() + 1);
                     }
                 }
             } 
@@ -270,11 +325,8 @@ class Game {
             }
             return setActivePlayer(players[!getActivePlayerIndex()]);
         }
-        int checkSpaceTaken() {
-
-        }
         int takeSetupTurn(Player playerInput) {
-            Fleet tempFleet = players[!getActivePlayerIndex()].getPlayerFleet();
+            Fleet tempFleet = getActivePlayer().getPlayerFleet();
             int shipLength = 0;
             int yStartCoord = 0, xStartCoord = 0,
                 yEndCoord = 0, xEndCoord = 0;
@@ -287,6 +339,7 @@ class Game {
             int numOptions = 0;
             int yDirectionMultiplier = 0, xDirectionMultiplier;
             for (int shipIndex = 0; shipIndex < FLEETSIZE; shipIndex++) {
+                displayPlayerGrid(getActivePlayer());
                 cout << "Player " << (getActivePlayerIndex() + 1);
                 cout << ", place your ship of length ";
                 if (shipIndex == 0) {
@@ -433,13 +486,15 @@ class Game {
 };
 
 int main() {
-    // Switch 1s to 2s if hit
-    bool gameActive = 1;
     Game game;
     Game* gameptr = &game;
-    game.startGame(); // Find out way to call methods on Game Object not Game pointer 
-    while (gameActive) {
+    game.startGame();
+    bool setupTaken = 0;
+    while (!(game.gameEnd())) {
         Player currentPlayer = game.getActivePlayer();
+        if (!setupTaken) {
+            
+        }
         for (int shipIndex = 0; shipIndex < FLEETSIZE; shipIndex++) {
             cout << "Player " + ((game.getActivePlayerIndex()) + 1);
             cout << " place your ships. Input coordinates of ship length ";
