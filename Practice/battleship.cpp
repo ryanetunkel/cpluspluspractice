@@ -243,17 +243,17 @@ class Game {
         }
         int takeSetupTurn(Player playerInput) {
             Fleet tempFleet = players[!getActivePlayerIndex()].getPlayerFleet();
-            int shipLength;
-            int yStartCoord, xStartCoord,
-                yEndCoord, xEndCoord;
+            int shipLength = 0;
+            int yStartCoord = 0, xStartCoord = 0,
+                yEndCoord = 0, xEndCoord = 0;
             int startCoords[2], endCoords[2];
             bool validYStartCoord = 0, validXStartCoord = 0,
                 validStartCoords = 0, validEndCoords = 0;
-            bool north, east, south, west;
             bool shipInWay = 0;
             int validEndCoordsArray[4][2];
-            int chosenCoordsOption;
-            int numOptions;
+            int chosenCoordsOption = 0;
+            int numOptions = 0;
+            int yDirectionMultiplier = 0, xDirectionMultiplier;
             for (int shipIndex = 0; shipIndex < FLEETSIZE; shipIndex++) {
                 cout << "Player " << (getActivePlayerIndex() + 1);
                 cout << ", place your ship of length ";
@@ -271,6 +271,9 @@ class Game {
                 while (!validStartCoords) {
                     validStartCoords = 0;
                     shipInWay = 0;
+                    numOptions = 0;
+                    yDirectionMultiplier = 0;
+                    xDirectionMultiplier = 0;
                     startCoords[0] = 0;
                     startCoords[1] = 0;
                     while (!validXStartCoord) {
@@ -298,19 +301,53 @@ class Game {
                     startCoords[0] -= 1; // Converts to index number
                     
                     for (int directionIndex = 0; !shipInWay && directionIndex < 4; directionIndex++) { //placeholder
-                        numOptions++; // counts number of options there are, used later
-                        switch (shipLength) {
-                            case 4:
-                                break;
-                            case 3:
-                                break;
-                            case 2:
-                                break;
+                        for (int shipCoordIndex = 0; shipCoordIndex < shipLength; shipCoordIndex++) {
+                            switch (directionIndex) {
+                                case 0: // North
+                                    if (startCoords[0] - shipLength + 1 >= 0 ) {
+                                        shipInWay = tempFleet.getShipArray()[shipIndex].getCoords()[startCoords[0] - shipCoordIndex][startCoords[1]] != 1;
+                                        yDirectionMultiplier = -1;
+                                        xDirectionMultiplier = 0;
+                                    }
+                                    break;
+                                case 1: // South
+                                    if (startCoords[0] + shipLength - 1 >= 0) {
+                                        shipInWay = tempFleet.getShipArray()[shipIndex].getCoords()[startCoords[0] + shipCoordIndex][startCoords[1]] != 1;
+                                        yDirectionMultiplier = 1;
+                                        xDirectionMultiplier = 0;
+                                    }
+                                    break;
+                                case 2: // East
+                                    if (startCoords[1] + shipLength - 1 >= 0) {
+                                        shipInWay = tempFleet.getShipArray()[shipIndex].getCoords()[startCoords[0]][startCoords[1] + shipCoordIndex] != 1;
+                                        yDirectionMultiplier = 0;
+                                        xDirectionMultiplier = 1;
+                                    }
+                                    break;
+                                case 3: // West
+                                    if (startCoords[1] - shipLength + 1 >= 0) {
+                                        shipInWay = tempFleet.getShipArray()[shipIndex].getCoords()[startCoords[0]][startCoords[1] - shipCoordIndex] != 1;
+                                        yDirectionMultiplier = 0;
+                                        xDirectionMultiplier = -1;
+                                    }
+                                    break;
+                            }
                         }
-                        /* && Math to see if there in space in any of the 4 cardinal directions for a ship of this size */;
-                        // If there is a ship in the way, shipInWay = 1;
+                        if (!shipInWay) {
+                            validEndCoordsArray[numOptions][0] 
+                                = tempFleet.getShipArray()[shipIndex].getCoords()
+                                [startCoords[0] + ((shipLength - 1) * yDirectionMultiplier)]
+                                [startCoords[1] + ((shipLength - 1) * xDirectionMultiplier)] != 1;
+                            validEndCoordsArray[numOptions][1] 
+                                = tempFleet.getShipArray()[shipIndex].getCoords()
+                                [startCoords[0] + ((shipLength - 1) * yDirectionMultiplier)]
+                                [startCoords[1] + ((shipLength - 1) * xDirectionMultiplier)] != 1;
+                            numOptions++; // counts number of options there are, used later
+                        } else {
+                            shipInWay = 0; // Resets, reusing in this instance to only add valid coords
+                        }
                     }
-
+                    shipInWay = (numOptions > 0);
                     if (!shipInWay) {
                         validStartCoords = 
                             (tempFleet.getShipArray()[shipIndex].getCoords()[startCoords[0]][startCoords[1]]) != 1;
@@ -320,9 +357,8 @@ class Game {
                     } else {
                         cout << "Invalid coordinate: Not enough space for ship." << endl;
                     }
-
-                    
                 }
+
                 while (!validEndCoords) {
                     cout << "The length of the ship you are placing is: " + shipLength;
                     cout << " and your starting coordinates are X: " << (startCoords[1] + 1);
@@ -339,12 +375,28 @@ class Game {
                         endCoords[0] -= 1; // Converts to index number
                         endCoords[1] -= 1; // Converts to index number
                         validEndCoords = 1;
+                        // Math for adding the full coords to the ship
+                        int finalCoords[shipLength][2];
+                        int* finalCoordsPtr = *finalCoords;// working on pointer for VVVV
+                        finalCoords[0][0] = startCoords[0];
+                        finalCoords[0][1] = startCoords[1];
+                        for (int finalCoordsIndex = 0; finalCoordsIndex < shipLength - 2; finalCoordsIndex++) {
+                            finalCoords[finalCoordsIndex][0] = 
+                            startCoords[0] + ((shipLength - 1) * yDirectionMultiplier);
+                            finalCoords[finalCoordsIndex][1] =
+                            startCoords[1] + ((shipLength - 1) * xDirectionMultiplier);
+                        }
+                        finalCoords[shipLength][0] = endCoords[0];
+                        finalCoords[shipLength][1] = endCoords[1];
+                        tempFleet.getShipArray()[shipIndex].setCoords(finalCoords);// HERE HERE
+
+                        // Updating the player's fleet
+                        // for each ship in tempFleet, make an identical one in the actual one.
+                        // players[!getActivePlayerIndex()].setPlayerFleet() 
                     } else {
                         cout << "Invalid Selection: Number not listed." << endl;
                     }
                 }
-                cout << "";
-                // tempString.clear(); // ??
             }
         }
     protected:
