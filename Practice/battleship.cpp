@@ -17,8 +17,8 @@ class Ship {
         }
         int setCoords(int** coordsInput) {
             bool coordsSet = 0;
-            for (int yCoordIndex = 0; yCoordIndex < sizeof(coordsInput) / sizeof(int); yCoordIndex++) {
-                for (int xCoordIndex = 0; xCoordIndex < sizeof(coordsInput[yCoordIndex]) / sizeof(int); xCoordIndex++) {
+            for (int yCoordIndex = 0; yCoordIndex < getLength(); yCoordIndex++) {
+                for (int xCoordIndex = 0; xCoordIndex < getLength(); xCoordIndex++) {
                     coordsInput[yCoordIndex][xCoordIndex] = coords[yCoordIndex][xCoordIndex];
                 }
             }
@@ -43,13 +43,11 @@ class Fleet {
         int addShip(Ship addedShip) {
             bool shipAdded = 0;
             Ship* shipArray = getShipArray();
-            for (int shipIndex = 0; !shipAdded && shipIndex < sizeof(shipArray) / sizeof(Ship); shipIndex++) {
-                if (shipArray[shipIndex].getLength() == NULL) {
-                    shipArray[shipIndex] = addedShip;
-                    shipArray[shipIndex].setLength(addedShip.getLength());
-                    shipArray[shipIndex].setCoords(addedShip.getCoords());
-                    shipAdded = 1;
-                }
+            for (int shipIndex = 0; !shipAdded && shipIndex < FLEETSIZE; shipIndex++) {
+                shipArray[shipIndex] = addedShip;
+                shipArray[shipIndex].setLength(addedShip.getLength());
+                shipArray[shipIndex].setCoords(addedShip.getCoords());
+                shipAdded = 1;
             }
             return 0;
         }
@@ -243,7 +241,7 @@ class Game {
         bool gameEnd() {
             switch (playerWin()) {
                 case 0: 
-                    return 0;
+                    break;
                 case 1:
                     cout << "Player 1 Wins!" << endl;
                     return 1;
@@ -251,6 +249,7 @@ class Game {
                     cout << "Player 2 Wins!" << endl;
                     return 1;
             }
+            return 0;
         }
         bool shoot() { // 0 means no ship and no shots, 1 means ship and no shots, 2 means no ship and a shot, 3 means a ship and a shot.
             int coord = players[!getActivePlayerIndex()].getPlayerGrid()[getShotCoords()[0]][getShotCoords()[1]];
@@ -364,9 +363,9 @@ class Game {
                     while (!validXStartCoord) {
                         cout << "Input your starting X coordinate, a value between 1 and 10 (including 1 and 10):" << endl;
                         cin >> startCoords[1];
-                        validXStartCoord == 
-                            startCoords[1] >= 0 
-                            && startCoords[1] <= GRIDWIDTH - 1;
+                        validXStartCoord = 
+                            (startCoords[1] >= 0 
+                            && startCoords[1] <= GRIDWIDTH - 1);
                         if (!validXStartCoord) {
                             cout << "Invald coordinate: Improper value." << endl;
                         }
@@ -376,7 +375,7 @@ class Game {
                     while (!validYStartCoord) {
                         cout << "Input your starting Y coordinate, a value between 1 and 10 (including 1 and 10):" << endl;
                         cin >> startCoords[0];
-                        validYStartCoord == 
+                        validYStartCoord = 
                             startCoords[0] >= 0 
                             && startCoords[0] <= GRIDHEIGHT - 1;
                         if (!validYStartCoord) {
@@ -445,7 +444,7 @@ class Game {
                 }
 
                 while (!validEndCoords) {
-                    cout << "The length of the ship you are placing is: " + shipLength;
+                    cout << "The length of the ship you are placing is: " << shipLength;
                     cout << " and your starting coordinates are X: " << (startCoords[1] + 1);
                     cout << " , Y: " << (startCoords[0] + 1) << endl;
                     cout << "Which of these coordinates would you like the back end of the ship to be placed in?." << endl; 
@@ -479,6 +478,7 @@ class Game {
                     }
                 }
             }
+            return 0;
         }
     protected:
         Player activePlayer;
@@ -489,15 +489,8 @@ int main() {
     Game game;
     Game* gameptr = &game;
     game.startGame();
-    bool setupTaken = 0;
     while (!(game.gameEnd())) {
         Player currentPlayer = game.getActivePlayer();
-        if (!setupTaken) {
-            
-        }
-        for (int shipIndex = 0; shipIndex < FLEETSIZE; shipIndex++) {
-            cout << "Player " + ((game.getActivePlayerIndex()) + 1);
-            cout << " place your ships. Input coordinates of ship length ";
-        }
+        game.takeTurn(currentPlayer);
     }
 }
