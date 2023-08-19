@@ -220,6 +220,7 @@ class Game {
                 Fleet tempFleet = players[!getActivePlayerIndex()].getPlayerFleet();
                 Ship tempShip;
                 int tempCoords[2];
+                char tempGrid[GRIDHEIGHT][GRIDWIDTH];
                 for (int fleetIndex = 0; fleetIndex < FLEETSIZE; fleetIndex++) {
                     tempShip = tempFleet.getShipArray()[fleetIndex];
                     for (int shipLengthIndex = 0; shipLengthIndex < tempShip.getLength(); shipLengthIndex++) {
@@ -227,7 +228,14 @@ class Game {
                         tempCoords[1] = tempShip.getCoords()[shipLengthIndex][1];
                         if (tempCoords[0] == getShotCoords()[0] && tempCoords[1] == getShotCoords()[1]) {
                             players[!getActivePlayerIndex()].getPlayerGrid()[getShotCoords()[0]][getShotCoords()[1]] += 2;
-                            players[getActivePlayerIndex()].getOpponentGrid()[getShotCoords()[0]][getShotCoords()[1]].set'X';
+                            for (int yCoordIndex = 0; yCoordIndex < GRIDHEIGHT; yCoordIndex++) {
+                                for (int xCoordIndex = 0; xCoordIndex < GRIDWIDTH; xCoordIndex++) {
+                                    tempGrid[yCoordIndex][xCoordIndex] 
+                                    = players[getActivePlayerIndex()].getOpponentGrid()[yCoordIndex][xCoordIndex];
+                                }
+                            }
+                            tempGrid[getShotCoords()[0]][getShotCoords()[1]] = 'X';
+                            players[getActivePlayerIndex()].setOpponentGrid(tempGrid);
                             if (coord == 0) {
                                 cout << "Miss." << endl;
                             } else {
