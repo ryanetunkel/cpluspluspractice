@@ -10,6 +10,10 @@ const int
 
 class Ship {
     public:
+        Ship() {
+            length = 0;
+            coords = new int* [2];
+        }
         int setLength(int lengthInput) {
             return length = lengthInput;
         }
@@ -132,7 +136,7 @@ class Player {
         }
     protected:
         int playerNum;
-        int points;
+        int points = 0;
         Fleet fleet;
         int playerGrid[GRIDHEIGHT][GRIDWIDTH] = {
             {0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
