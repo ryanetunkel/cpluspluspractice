@@ -279,6 +279,167 @@ int main() {
     // cout << food << "\n";
 
 
+    // void myFunction(string country = "Norway") {
+    // cout << country << "\n";
+    // }
+
+    // int main() {
+    // myFunction("Sweden");
+    // myFunction("India");
+    // myFunction();
+    // myFunction("USA");
+    // return 0;
+    // }
+
+    // // Sweden
+    // // India
+    // // Norway
+    // // USA
+
+
+    // void swapNums(int &x, int &y) {
+    // int z = x;
+    // x = y;
+    // y = z;
+    // }
+
+    // int main() {
+    // int firstNum = 10;
+    // int secondNum = 20;
+
+    // cout << "Before swap: " << "\n";
+    // cout << firstNum << secondNum << "\n";
+
+    // // Call the function, which will change the values of firstNum and secondNum
+    // swapNums(firstNum, secondNum);
+
+    // cout << "After swap: " << "\n";
+    // cout << firstNum << secondNum << "\n";
+
+    // return 0;
+    // }
+
+
+    // void myFunction(int myNumbers[5]) {
+    // for (int i = 0; i < 5; i++) {
+    //     cout << myNumbers[i] << "\n";
+    // }
+    // }
+
+    // int main() {
+    // int myNumbers[5] = {10, 20, 30, 40, 50};
+    // myFunction(myNumbers);
+    // return 0;
+    // }
+
+
+    // int myFunction(int x)
+    // float myFunction(float x)
+    // double myFunction(double x, double y)
+
+
+    // class MyClass {     // The class
+    // public:           // Access specifier
+    //     MyClass() {     // Constructor
+    //     cout << "Hello World!";
+    //     }
+    // };
+
+    // int main() {
+    // MyClass myObj;    // Create an object of MyClass (this will call the constructor)
+    // return 0;
+    // }
+
+
+    // class Car {        // The class
+    // public:          // Access specifier
+    //     string brand;  // Attribute
+    //     string model;  // Attribute
+    //     int year;      // Attribute
+    //     Car(string x, string y, int z) { // Constructor with parameters
+    //     brand = x;
+    //     model = y;
+    //     year = z;
+    //     }
+    // };
+
+    // int main() {
+    // // Create Car objects and call the constructor with different values
+    // Car carObj1("BMW", "X5", 1999);
+    // Car carObj2("Ford", "Mustang", 1969);
+
+    // // Print values
+    // cout << carObj1.brand << " " << carObj1.model << " " << carObj1.year << "\n";
+    // cout << carObj2.brand << " " << carObj2.model << " " << carObj2.year << "\n";
+    // return 0;
+    // }
+
+
+    // Multiple Inheritance
+    // Base class
+    // class MyClass {
+    // public:
+    //     void myFunction() {
+    //     cout << "Some content in parent class." ;
+    //     }
+    // };
+
+    // // Another base class
+    // class MyOtherClass {
+    // public:
+    //     void myOtherFunction() {
+    //     cout << "Some content in another class." ;
+    //     }
+    // };
+
+    // // Derived class
+    // class MyChildClass: public MyClass, public MyOtherClass {
+    // };
+
+    // int main() {
+    // MyChildClass myObj;
+    // myObj.myFunction();
+    // myObj.myOtherFunction();
+    // return 0;
+    // }
+
+
+    // Polymorphism
+    // Methods inherited from parent classes doing different things depending on the child
+    // Base class
+    // class Animal {
+    //   public:
+    //     void animalSound() {
+    //       cout << "The animal makes a sound \n";
+    //     }
+    // };
+
+    // // Derived class
+    // class Pig : public Animal {
+    //   public:
+    //     void animalSound() {
+    //       cout << "The pig says: wee wee \n";
+    //     }
+    // };
+
+    // // Derived class
+    // class Dog : public Animal {
+    //   public:
+    //     void animalSound() {
+    //       cout << "The dog says: bow wow \n";
+    //     }
+    // };
+
+    // int main() {
+    //   Animal myAnimal;
+    //   Pig myPig;
+    //   Dog myDog;
+
+    //   myAnimal.animalSound();
+    //   myPig.animalSound();
+    //   myDog.animalSound();
+    //   return 0;
+    // }
 
     return 0;
 }

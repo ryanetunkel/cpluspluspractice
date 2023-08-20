@@ -20,7 +20,7 @@ class Ship {
             bool coordsSet = 0;
             for (int yCoordIndex = 0; yCoordIndex < getLength(); yCoordIndex++) {
                 for (int xCoordIndex = 0; xCoordIndex < getLength(); xCoordIndex++) {
-                    coordsInput[yCoordIndex][xCoordIndex] = coords[yCoordIndex][xCoordIndex];
+                    coords[yCoordIndex][xCoordIndex] = coordsInput[yCoordIndex][xCoordIndex];
                 }
             }
             setLength(sizeof(coords) / sizeof(int));
