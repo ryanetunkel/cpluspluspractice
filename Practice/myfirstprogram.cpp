@@ -242,8 +242,17 @@ int main() {
     // can do more too:
     // string letters[2][2][2];
 
-    int i = 1;
-    cout << "Hi Number " << i << ", how are you?";
+    // int i = 1;
+    // cout << "Hi Number " << i << ", how are you?";
+    
+    // string food = "Pizza";  // Variable declaration
+    // string* ptr = &food;    // Pointer declaration
+
+    // // Reference: Output the memory address of food with the pointer (0x6dfed4)
+    // cout << ptr << "\n";
+
+    // // Dereference: Output the value of food with the pointer (Pizza)
+    // cout << *ptr << "\n";
 
     return 0;
 }

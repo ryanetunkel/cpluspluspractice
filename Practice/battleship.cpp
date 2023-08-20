@@ -1,3 +1,4 @@
+#include <string>
 #include <iostream>
 #include <cmath>
 using namespace std;
@@ -179,10 +180,10 @@ class Game {
             Player tempActivePlayer;
             tempActivePlayer = players[rand() % 2];
             setActivePlayer(tempActivePlayer);
-            cout << "Player " << tempActivePlayer.getPlayerNum() << ", you go first." << endl;
+            cout << "Player " << tempActivePlayer.getPlayerNum() + 1 << ", you go first." << endl;
             takeSetupTurn(tempActivePlayer);
             setActivePlayer(players[!getActivePlayerIndex()]);
-            cout << "Player " << tempActivePlayer.getPlayerNum() << ", your turn now." << endl;
+            cout << "Player " << tempActivePlayer.getPlayerNum() + 1 << ", your turn now." << endl;
             takeSetupTurn(tempActivePlayer);
             return 0;
         }
@@ -307,6 +308,7 @@ class Game {
         int takeTurn(Player playerInput) {
             int yCoord, xCoord;
             int tempShotCoords[2];
+            string currentPlayerStringInput;
             while (!shoot()) {
                 displayGrids(playerInput);
                 cout << "Player " << (getActivePlayerIndex() + 1) << endl;
@@ -314,9 +316,13 @@ class Game {
                 cout << "Xs are hits, Os are misses." << endl;
                 cout << "Take your shot." << endl;
                 cout << "Input the y coordinate of your shot, a value between 1 and 10:" << endl;
-                cin >> yCoord;
+                cin >> currentPlayerStringInput;
+                yCoord = stoi(currentPlayerStringInput);
+                currentPlayerStringInput.clear();
                 cout << "Input the x coordinate of your shot, a value between 1 and 10:" << endl;
-                cin >> xCoord;
+                cin >> currentPlayerStringInput;
+                xCoord = stoi(currentPlayerStringInput);
+                currentPlayerStringInput.clear();
                 tempShotCoords[0] = yCoord;
                 tempShotCoords[1] = xCoord;
                 setShotCoords(tempShotCoords);
@@ -337,9 +343,10 @@ class Game {
             int chosenCoordsOption = 0;
             int numOptions = 0;
             int yDirectionMultiplier = 0, xDirectionMultiplier;
+            string currentPlayerStringInput;
             for (int shipIndex = 0; shipIndex < FLEETSIZE; shipIndex++) {
                 displayPlayerGrid(getActivePlayer());
-                cout << "Player " << (getActivePlayerIndex() + 1);
+                cout << "Player " << (getActivePlayerIndex());
                 cout << ", place your ship of length ";
                 if (shipIndex == 0) {
                     cout << "4. " << endl;
@@ -362,7 +369,9 @@ class Game {
                     startCoords[1] = 0;
                     while (!validXStartCoord) {
                         cout << "Input your starting X coordinate, a value between 1 and 10 (including 1 and 10):" << endl;
-                        cin >> startCoords[1];
+                        cin >> currentPlayerStringInput;
+                        startCoords[1] = stoi(currentPlayerStringInput);
+                        currentPlayerStringInput.clear();
                         validXStartCoord = 
                             (startCoords[1] >= 0 
                             && startCoords[1] <= GRIDWIDTH - 1);
@@ -374,7 +383,9 @@ class Game {
 
                     while (!validYStartCoord) {
                         cout << "Input your starting Y coordinate, a value between 1 and 10 (including 1 and 10):" << endl;
-                        cin >> startCoords[0];
+                        cin >> currentPlayerStringInput;
+                        startCoords[0] = stoi(currentPlayerStringInput);
+                        currentPlayerStringInput.clear();
                         validYStartCoord = 
                             startCoords[0] >= 0 
                             && startCoords[0] <= GRIDHEIGHT - 1;
@@ -452,7 +463,9 @@ class Game {
                         cout << "Type \"" << (validEndCoordsArrayIndex + 1) << "\" for: X: " << validEndCoordsArray[validEndCoordsArrayIndex][0];
                         cout << ", Y: " << validEndCoordsArray[validEndCoordsArrayIndex][1] << "." << endl;
                     }
-                    cin >> chosenCoordsOption;
+                    cin >> currentPlayerStringInput;
+                    chosenCoordsOption = stoi(currentPlayerStringInput);
+                    currentPlayerStringInput.clear();
                     if (chosenCoordsOption > 0 && chosenCoordsOption <= numOptions) {
                         endCoords[0] = validEndCoordsArray[chosenCoordsOption - 1][0];
                         endCoords[1] = validEndCoordsArray[chosenCoordsOption - 1][1];
