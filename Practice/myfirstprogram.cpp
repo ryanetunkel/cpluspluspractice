@@ -242,9 +242,11 @@ int main() {
     // can do more too:
     // string letters[2][2][2];
 
+
     // int i = 1;
     // cout << "Hi Number " << i << ", how are you?";
-    
+
+
     // string food = "Pizza";  // Variable declaration
     // string* ptr = &food;    // Pointer declaration
 
@@ -253,6 +255,30 @@ int main() {
 
     // // Dereference: Output the value of food with the pointer (Pizza)
     // cout << *ptr << "\n";
+
+
+    // string food = "Pizza";
+    // string* ptr = &food;
+
+    // // Output the value of food (Pizza)
+    // cout << food << "\n";
+
+    // // Output the memory address of food (0x6dfed4)
+    // cout << &food << "\n";
+
+    // // Access the memory address of food and output its value (Pizza)
+    // cout << *ptr << "\n";
+
+    // // Change the value of the pointer
+    // *ptr = "Hamburger";
+
+    // // Output the new value of the pointer (Hamburger)
+    // cout << *ptr << "\n";
+
+    // // Output the new value of the food variable (Hamburger)
+    // cout << food << "\n";
+
+
 
     return 0;
 }
